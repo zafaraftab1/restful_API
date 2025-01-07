@@ -15,23 +15,21 @@ class UserProfileManager(BaseUserManager):
             raise ValueError('Users must have an email address')
 
         email=self.normalize_email(email)
-        user=self.model(email=email,name=name)
+        user=self.model(email=email)
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, name, password):
+    def create_superuser(self, email, name=None, password=None):
         """Create and save a new superuser with given details"""
-        user=self.create_user(email, password)
+        user=self.create_user(email,password)
 
         user.is_staff=True
         user.is_superuser=True
 
         user.save(using=self._db)
         return user
-
-
 
 class UserProfile(AbstractBaseUser, PermissionsMixin):
     """Represent a user profile" inside our system """
@@ -40,7 +38,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
-    objects = UserManager()
+    objects = UserProfileManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
 
