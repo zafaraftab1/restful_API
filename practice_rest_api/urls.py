@@ -18,9 +18,12 @@ from django.contrib.messages import api
 from django.contrib import admin
 from django.urls import path, re_path
 from django.urls import include
+from django.views import View
 
+import restfull_api
 
 urlpatterns = [
+
         path('admin/', admin.site.urls),
         path('api/', include('restfull_api.urls')),
 ]

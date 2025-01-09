@@ -1,10 +1,20 @@
+from django.views import View
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .import serializers,models
+from .import serializers,models,permissions
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+
+
+
 # Create your views here.
+
+class home(View):
+    def get(self,request):
+        return render (request,'home.html')
+
 class HelloApiView(APIView):
     """Test API View"""
     serializer_class = serializers.HelloSerializer
@@ -91,3 +101,5 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     """Handle creating reading and updating profiles"""
     serializer_class = serializers.UserProfileSerializer
     queryset = models.UserProfile.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.UpdateOwnPermission,)
