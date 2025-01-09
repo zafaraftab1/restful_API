@@ -1,6 +1,7 @@
 from django.views import View
 from django.shortcuts import render
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .import serializers,models,permissions
@@ -9,6 +10,12 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework import filters
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
+from .models import ProfileFeedItem
+from .serializers import ProfileFeedSerializer
+
+
+
+
 
 # Create your views here.
 
@@ -115,3 +122,15 @@ class LoginViewSet(viewsets.ViewSet):
     def create(self,request):
         """Use the ObtainAuthToken class to create a new token"""
         return ObtainAuthToken().as_view()(request._request)
+
+class ProfileFeedViewSet(viewsets.ModelViewSet):
+    """Handle creating and updating profiles"""
+
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = serializers.ProfileFeedSerializer
+    queryset = models.ProfileFeedItem.objects.all()
+    permission_classes = (permissions.PostOwnStatus,IsAuthenticated)
+
+    def perform_create(self, serializer):
+        """Sets the user profile to the logged-in user"""
+        serializer.save(user_profile=self.request.user)
