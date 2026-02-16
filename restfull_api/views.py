@@ -16,8 +16,26 @@ from .serializers import ProfileFeedSerializer
 
 
 
-
 # Create your views here.
+
+
+def standardized_response(message, data=None, success=True, http_status=status.HTTP_200_OK):
+    """Return a standardized DRF Response payload.
+
+    Args:
+        message (str): Human-readable message.
+        data (optional): Optional data payload (dict, list, etc.).
+        success (bool): Whether the response denotes success.
+        http_status (int): HTTP status code for the response.
+    """
+    payload = {
+        'success': success,
+        'message': message,
+    }
+    if data is not None:
+        payload['data'] = data
+    return Response(payload, status=http_status)
+
 
 class home(View):
     def get(self,request):
@@ -38,7 +56,7 @@ class HelloApiView(APIView):
             'Is mapped manually to urls'
         ]
 
-        return Response({'message': 'Hello!', 'an_apiview': an_apiview})
+        return standardized_response('Hello!', {'an_apiview': an_apiview})
 
     def post(self, request):
         """Created a hello message with our name"""
@@ -76,7 +94,7 @@ class HelloViewSet(viewsets.ViewSet):
             'Provides more functionality with less code'
         ]
 
-        return Response({'message': 'Hello!', 'an_apiview': an_apiview})
+        return standardized_response('Hello!', {'an_apiview': an_apiview})
 
     def create(self, request):
         """Create a new hello message"""
